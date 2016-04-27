@@ -1,0 +1,23 @@
+name: ColorfulWarps
+main: net.supernoobs.colorfulwarps.ColorfulWarps
+version: ${version}
+author: [colorfulchew]
+commands:
+  warp:
+    description: Uses a warp
+    permission: colorfulwarps.use
+    usage: /warp
+  setwarp:
+    description: Set warp
+    permission: colorfulwarps.set
+    usage: /setwarp <warp>
+  delwarp:
+    description: Deletes a warp
+    permission: colorfulwarps.delete
+    usage: /delwarp <warp>
+permissions:
+  colorfulrankprefixes.admin:
+    colorfulrankprefixes.set: true
+  colorfulrankprefixes.set:
+    description: Allows the player to set warps
+    default: false
