@@ -1,6 +1,5 @@
 package net.supernoobs.colorfulwarps;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;

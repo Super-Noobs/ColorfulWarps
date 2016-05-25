@@ -16,8 +16,11 @@ commands:
     permission: colorfulwarps.delete
     usage: /delwarp <warp>
 permissions:
-  colorfulrankprefixes.admin:
-    colorfulrankprefixes.set: true
-  colorfulrankprefixes.set:
+  colorfulwarps.admin:
+    colorfulwarps.set: true
+  colorfulwarps.use:
+    description: Allows player to use warps
+    default: true
+  colorfulwarps.set:
     description: Allows the player to set warps
     default: false
