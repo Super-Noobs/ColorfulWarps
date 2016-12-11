@@ -23,26 +23,16 @@ public class WarpManager {
 		}
 		
 		conf = YamlConfiguration.loadConfiguration(warpsFile);
-		
-		conf.getConfigurationSection("warps");
-		for(String warpKey:conf.getConfigurationSection("warps").getKeys(false)) {
-			Warp warpy = loadWarp(warpKey);
-			warps.put(warpKey, warpy);
+		if(conf.isConfigurationSection("warps")) {
+			for(String warpKey:conf.getConfigurationSection("warps").getKeys(false)) {
+				Warp warpy = (Warp) conf.get("warps."+warpKey);
+				warps.put(warpKey, warpy);
+			}
 		}
 	}
 	
-	private Warp loadWarp(String warpKey) {
-		Warp nWarp = new Warp(warpKey);
-		nWarp.setLocation((Location) conf.get("warps."+warpKey+".location"));
-		nWarp.setItemStack(conf.getItemStack("warps."+warpKey+".gui-item"));
-		return nWarp;
-	}
-	
 	public void addWarp(Warp warp) {
-		YamlConfiguration conf = YamlConfiguration.loadConfiguration(warpsFile);
-		conf.set("warps."+warp.getWarpName()+".location", warp.getLocation());
-		conf.set("warps."+warp.getWarpName()+".gui-item", warp.getItemStack());
-		warps.put(warp.getWarpName(), warp);
+		conf.set("warps."+warp.getWarpName(), warp);
 		try {
 			conf.save(warpsFile);
 		} catch (IOException e) {
@@ -63,12 +53,11 @@ public class WarpManager {
 		}
 	}
 	
+	public boolean warpExists(String warpName) {
+		return warps.containsKey(warpName);
+	}
+	
 	public Warp getWarp(String warpName) {
-		if(!warps.containsKey(warpName)) {
-			Warp warp = loadWarp(warpName);
-			warps.put(warp.getWarpName(), warp);
-			return warp;
-		}
 		return warps.get(warpName);
 		
 	}

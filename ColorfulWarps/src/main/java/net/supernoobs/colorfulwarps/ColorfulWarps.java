@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,11 +21,10 @@ public class ColorfulWarps extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
-		
+		ConfigurationSerialization.registerClass(Warp.class);
 		warpManager = new WarpManager();
 		
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
-		
 		new Messages();
 	}
 	
@@ -55,6 +55,14 @@ public class ColorfulWarps extends JavaPlugin {
 					return true;
 				}
 				if(args[0].equalsIgnoreCase("set")) {
+					if(args.length > 2) {
+						if(args[1].toLowerCase().equals("item")) {
+							Warp warp = warpManager.getWarp(args[2]);
+							warp.setItemStack(((Player) sender).getInventory().getItemInMainHand());
+							warpManager.addWarp(warp);
+							return true;
+						}
+					}
 					SetWarp(sender, args[1]);
 					return true;
 				}
@@ -62,8 +70,24 @@ public class ColorfulWarps extends JavaPlugin {
 					warpManager.delWarp(args[1]);
 					sender.sendMessage("§cAttempted to remove "+args[1]);
 					return true;
+				} 
+				if(args[0].equalsIgnoreCase("lock")) {
+					if(!warpManager.warpExists(args[1])) {
+						sender.sendMessage("§cWarp not found");
+						return true;
+					}
+					Warp warp = warpManager.getWarp(args[1]);
+					warp.setPermissionRequired(!warp.isPermissionRequired());
+					warpManager.addWarp(warp);
+					sender.sendMessage("§aWarp lock: "+warp.isPermissionRequired());
+					return true;
 				}
-				Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new TeleportToWarp(warpManager.getWarp(args[0]),sender.getName()));
+				if(warpManager.warpExists(args[0])) {
+					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new TeleportToWarp(warpManager.getWarp(args[0]),sender.getName()));
+				} else {
+					sender.sendMessage("§cWarp not found!");
+					return true;
+				}
 				return true;
 			}
 		}
@@ -71,13 +95,13 @@ public class ColorfulWarps extends JavaPlugin {
 	}
 	
 	private void WarpMenu(Player sender){
-		sender.openInventory(Util.warpMenu());
+		sender.openInventory(Util.warpMenu(sender));
 	}
 	
 	private void SetWarp(CommandSender sender, String warpName) {
 		Warp warp = new Warp(warpName);
 		warp.setLocation(((Player) sender).getLocation());
-		warp.setItemStack(new ItemStack(Material.BREAD));
+		warp.setItemStack(warp.generateDefaultItemStack());
 		warpManager.addWarp(warp);
 		sender.sendMessage("§aSuccessfully set warp to "+warp.getWarpName());
 	}

@@ -24,14 +24,12 @@ public class InventoryListener implements Listener {
 				if(stack.getType().equals(Material.REDSTONE_BLOCK)) {
 					ev.getWhoClicked().closeInventory();
 				} else if(!stack.getType().equals(Material.AIR)) {
-					ItemMeta meta = ev.getCurrentItem().getItemMeta();
-					String warpText = ChatColor.stripColor(meta.getDisplayName());
-					ev.getWhoClicked().closeInventory();
-					Warp warp = ColorfulWarps.plugin.warpManager.getWarp(warpText);
-					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ColorfulWarps.plugin, 
-							new TeleportToWarp(warp, ev.getWhoClicked().getName()));
-					
-					
+					for(Warp warp:ColorfulWarps.plugin.warpManager.getWarps().values()) {
+						if(stack.isSimilar(warp.getItemStack())) {
+							Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ColorfulWarps.plugin, 
+									new TeleportToWarp(warp, ev.getWhoClicked().getName()));
+						}
+					}
 				}
 			}
 			

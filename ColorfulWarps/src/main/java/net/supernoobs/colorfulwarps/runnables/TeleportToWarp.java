@@ -16,6 +16,10 @@ public class TeleportToWarp implements Runnable {
 	@Override
 	public void run() {
 		Player player = Bukkit.getServer().getPlayer(playerName);
+		if(!warp.hasPermission(player)) {
+			player.sendMessage("§cYou lack permission for this warp");
+			return;
+		}
 		if(warp.getLocation() == null) {
 			player.sendMessage("§cWarp not found!");
 			return;
