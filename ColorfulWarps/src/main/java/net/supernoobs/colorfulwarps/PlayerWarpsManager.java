@@ -1,18 +1,41 @@
 package net.supernoobs.colorfulwarps;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashMap;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-
-public class PlayerWarpsManager implements ConfigurationSerializable {
-
-	@Override
-	public Map<String, Object> serialize() {
-		// TODO Auto-generated method stub
-		return null;
+public class PlayerWarpsManager {
+	private HashMap<String, PlayerWarpCategory> categories;
+	
+	/**
+	 * Calls load on construction
+	 */
+	public PlayerWarpsManager() {
+		load();
 	}
 	
-	public PlayerWarpsManager(Map<String, Object> map) {
+	/***
+	 * Saves the warp file to playerwarps.yml
+	 */
+	public void save() {
+		// TODO Save warp categories
+	}
+	
+	/***
+	 * Loads playerwarps.yml
+	 */
+	public void load() {
+		// TODO Load file
+	}
+	
+	public PlayerWarpCategory getCategory(String categoryName) {
+		return categories.get(categoryName);
+	}
+	
+	public Collection<PlayerWarpCategory> getCategories() {
+		return categories.values();
+	}
+	
+	public void addCategory(PlayerWarpCategory category) {
 		
 	}
 	

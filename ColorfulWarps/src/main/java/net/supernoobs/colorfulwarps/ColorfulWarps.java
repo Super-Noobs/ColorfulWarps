@@ -16,14 +16,19 @@ public class ColorfulWarps extends JavaPlugin {
 	public static ColorfulWarps plugin;
 	public static Economy economy = null;
 	public WarpManager warpManager;
+	public PlayerWarpsManager playerWarpManager;
 	
 	@Override
 	public void onEnable() {
 		plugin = this;
 		setupEconomy();
-		
+		// Register classes that we need to serialize
 		ConfigurationSerialization.registerClass(Warp.class);
+		ConfigurationSerialization.registerClass(PlayerWarpCategory.class);
+		ConfigurationSerialization.registerClass(PlayerWarp.class);
+		
 		warpManager = new WarpManager();
+		playerWarpManager = new PlayerWarpsManager();
 		
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		new Messages();
@@ -46,9 +51,11 @@ public class ColorfulWarps extends JavaPlugin {
 				return true;
 			}
 			if (cmd.getName().equalsIgnoreCase("delwarp")) {
-				warpManager.delWarp(args[0]);
-				sender.sendMessage("§cAttempted to remove "+args[0]);
-				return true;
+				if(sender.hasPermission("colorfulwarps.set")) {
+					warpManager.delWarp(args[0]);
+					sender.sendMessage("§cAttempted to remove "+args[0]);
+					return true;
+				}
 			}
 			if (cmd.getName().equalsIgnoreCase("warp")) {
 				if(args.length == 0) {
@@ -111,11 +118,13 @@ public class ColorfulWarps extends JavaPlugin {
 	}
 	
 	private void SetWarp(CommandSender sender, String warpName) {
-		Warp warp = new Warp(warpName);
-		warp.setLocation(((Player) sender).getLocation());
-		warp.setItemStack(warp.generateDefaultItemStack());
-		warpManager.addWarp(warp);
-		sender.sendMessage("§aSuccessfully set warp to "+warp.getWarpName());
+		if(sender.hasPermission("colorfulwarps.set")) {
+			Warp warp = new Warp(warpName);
+			warp.setLocation(((Player) sender).getLocation());
+			warp.setItemStack(warp.generateDefaultItemStack());
+			warpManager.addWarp(warp);
+			sender.sendMessage("§aSuccessfully set warp to "+warp.getWarpName());
+		}
 	}
 	
 	private boolean setupEconomy() {
