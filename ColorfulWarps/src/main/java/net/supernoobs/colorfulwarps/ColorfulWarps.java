@@ -5,19 +5,23 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.milkbowl.vault.economy.Economy;
 import net.supernoobs.colorfulwarps.listeners.InventoryListener;
 import net.supernoobs.colorfulwarps.runnables.TeleportToWarp;
 
 public class ColorfulWarps extends JavaPlugin {
 	public static ColorfulWarps plugin;
-	
+	public static Economy economy = null;
 	public WarpManager warpManager;
 	
 	@Override
 	public void onEnable() {
 		plugin = this;
+		setupEconomy();
+		
 		ConfigurationSerialization.registerClass(Warp.class);
 		warpManager = new WarpManager();
 		
@@ -112,5 +116,13 @@ public class ColorfulWarps extends JavaPlugin {
 		warp.setItemStack(warp.generateDefaultItemStack());
 		warpManager.addWarp(warp);
 		sender.sendMessage("§aSuccessfully set warp to "+warp.getWarpName());
+	}
+	
+	private boolean setupEconomy() {
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+		if (economyProvider != null) {
+			economy = economyProvider.getProvider();
+		}
+		return (economy != null);
 	}
 }
